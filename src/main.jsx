@@ -9,6 +9,8 @@ import "@fontsource/roboto/700.css";
 import Root from "./routes/root";
 import Upload from "./routes/upload";
 import Record from "./routes/record";
+import Dictaphone from "./routes/speechToTextSample";
+import Navigation from "./components/Navigation";
 
 const router = createBrowserRouter([
   {
@@ -31,10 +33,16 @@ const router = createBrowserRouter([
     path: "/record/:id",
     element: <Record />,
   },
+  {
+    path: "/record_sample",
+    element: <Dictaphone />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Navigation>
+      <RouterProvider router={router} />
+    </Navigation>
   </React.StrictMode>,
 );
