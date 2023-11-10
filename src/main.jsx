@@ -6,10 +6,10 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import Root from "./routes/root";
-import Upload from "./routes/upload";
-import Record from "./routes/record";
-import Dictaphone from "./routes/speechToTextSample";
+import Root from "./routes/Root";
+import Upload from "./routes/Upload";
+import Record from "./routes/Record";
+import Dictaphone from "./routes/RecordOnly";
 import Navigation from "./components/Navigation";
 
 const router = createBrowserRouter([
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     element: <Record />,
   },
   {
-    path: "/record_sample",
+    path: "/record_only",
     element: <Dictaphone />,
   },
 ]);

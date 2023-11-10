@@ -20,7 +20,7 @@ const title = "SlideTrack";
 const navItems = [
   { item: "Upload", link: "./upload", target: "_self" },
   { item: "Record", link: "./record", target: "_self" },
-  { item: "record_sample", link: "./record_sample", target: "_self" },
+  { item: "Record Only", link: "./record_only", target: "_self" },
   {
     item: "GitHub",
     link: "https://github.com/Shirashoji/chofu-population-vis",

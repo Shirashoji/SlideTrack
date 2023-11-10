@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import IconButton from "@mui/material/IconButton";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
 
 const Dictaphone = () => {
   const {
@@ -12,6 +15,7 @@ const Dictaphone = () => {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
   const [records, setRecords] = useState([]);
+  const [recordingMode, setRecordingMode] = useState(false);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -25,11 +29,23 @@ const Dictaphone = () => {
       ]);
   }, [listening]);
 
+  useEffect(() => {
+    if (recordingMode) SpeechRecognition.startListening();
+    else SpeechRecognition.stopListening();
+  }, [listening, recordingMode]);
+
   return (
     <div>
-      <p>Microphone: {listening ? "on" : "off"}</p>
-      <button onClick={SpeechRecognition.startListening}>Start</button>
-      <button onClick={SpeechRecognition.stopListening}>Stop</button>
+      <p>Microphone: {recordingMode ? "on" : "off"}</p>
+      {recordingMode ? (
+        <IconButton onClick={() => setRecordingMode(!recordingMode)}>
+          <MicIcon color="primary" />
+        </IconButton>
+      ) : (
+        <IconButton onClick={() => setRecordingMode(!recordingMode)}>
+          <MicOffIcon />
+        </IconButton>
+      )}
       <button onClick={resetTranscript}>Reset</button>
       <p>speech now: {transcript}</p>
       <p>records:</p>
