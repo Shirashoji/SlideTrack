@@ -1,6 +1,6 @@
 export default function Upload() {
   return (
-    <div id="main">z
+    <div id="main">
       <h1>Upload</h1>
     </div>
   );
