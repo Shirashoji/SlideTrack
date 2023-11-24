@@ -1,8 +1,9 @@
 import "regenerator-runtime";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
@@ -47,6 +48,7 @@ const Dictaphone = () => {
         </IconButton>
       )}
       <button onClick={resetTranscript}>Reset</button>
+      <button onClick={() => DownloadJSON(records)}>Download</button>
       <p>speech now: {transcript}</p>
       <p>records:</p>
       <ul>
@@ -60,4 +62,28 @@ const Dictaphone = () => {
     </div>
   );
 };
+
+function DownloadJSON(jsonData) {
+  if (!jsonData) return null;
+  const date = new Date(Date.now());
+  const fileName = `record_${date.getFullYear()}${(
+    "0" + String(date.getMonth() + 1)
+  ).slice(-2)}${("0" + String(date.getDate())).slice(-2)}-${(
+    "0" + String(date.getHours())
+  ).slice(-2)}${("0" + String(date.getMinutes())).slice(-2)}${(
+    "0" + String(date.getSeconds())
+  ).slice(-2)}.json`;
+  const blobData = new Blob([JSON.stringify(jsonData)], {
+    type: "application/json",
+  });
+  const url = window.URL.createObjectURL(blobData);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export default Dictaphone;
