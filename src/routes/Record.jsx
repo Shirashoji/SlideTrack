@@ -9,7 +9,8 @@ import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import Box from "@mui/system/Box";
+import Paper from "@mui/material/Paper";
 
 export default function Record() {
   const {
@@ -20,6 +21,7 @@ export default function Record() {
   } = useSpeechRecognition();
   const [records, setRecords] = useState([]);
   const [recordingMode, setRecordingMode] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -40,49 +42,53 @@ export default function Record() {
 
   return (
     <div id="main">
-      <h1>Record</h1>
-      <Grid
-        container
-        direction="column"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Grid item xs>
-          {recordingMode ? (
-            <IconButton
-              color="primary"
-              variant="contained"
-              onClick={() => setRecordingMode(!recordingMode)}
-            >
-              <MicIcon color="primary" />
-            </IconButton>
-          ) : (
-            <IconButton onClick={() => setRecordingMode(!recordingMode)}>
-              <MicOffIcon />
-            </IconButton>
-          )}
+      <Stack direction="row" spacing={2}>
+        <Grid
+          container
+          direction="column"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Grid item xs>
+            <SlideView pageNumber={pageNumber} />
+          </Grid>
+          <Grid item xs>
+            {recordingMode ? (
+              <IconButton
+                color="primary"
+                variant="contained"
+                onClick={() => setRecordingMode(!recordingMode)}
+              >
+                <MicIcon color="primary" />
+              </IconButton>
+            ) : (
+              <IconButton onClick={() => setRecordingMode(!recordingMode)}>
+                <MicOffIcon />
+              </IconButton>
+            )}
+          </Grid>
+          <Grid item xs>
+            <Stack direction="row" spacing={2}>
+              <Button
+                color="warning"
+                variant="contained"
+                onClick={resetTranscript}
+              >
+                Reset
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  return DownloadJSON(records);
+                }}
+              >
+                Download
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <Stack direction="row" spacing={2}>
-            <Button
-              color="warning"
-              variant="contained"
-              onClick={resetTranscript}
-            >
-              Reset
-            </Button>
-            <Button variant="contained" onClick={() => DownloadJSON(records)}>
-              Download
-            </Button>
-          </Stack>
-        </Grid>
-        <Grid item xs>
-          <p>listening: {listening ? "on" : "off"}</p>
-        </Grid>
-        <Grid item xs>
-          <p>speech now: {transcript}</p>
-        </Grid>
-      </Grid>
+        <TranscriptionView records={records} transcript={transcript} />
+      </Stack>
     </div>
   );
 }
@@ -108,4 +114,50 @@ function DownloadJSON(jsonData) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+function SlideView(props) {
+  const { pageNumber } = props;
+  return (
+    <Box
+      component="section"
+      height={550}
+      width={900}
+      sx={{ p: 2, border: "1px dashed grey" }}
+    >
+      スライド{pageNumber}
+    </Box>
+  );
+}
+
+function TranscriptionView(props) {
+  const { records, transcript } = props;
+  const realtimeRecords = [
+    ...records,
+    { time: new Date(Date.now()), text: transcript },
+  ]; // Add transcript to records array
+  return (
+    <Box
+      component="section"
+      height={650}
+      width={500}
+      sx={{
+        p: 2,
+        border: "1px dashed grey",
+        overflowY: "scroll",
+        whiteSpace: "normal",
+      }}
+    >
+      <Paper elevation={3}>
+        <ul>
+          {realtimeRecords.map((record) => (
+            <li key={record.time}>
+              {record.time.getHours()}:{record.time.getMinutes()}:
+              {record.time.getSeconds()}: {record.text}
+            </li>
+          ))}
+        </ul>
+      </Paper>
+    </Box>
+  );
 }
