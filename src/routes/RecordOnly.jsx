@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
+import Stack from "@mui/material/Stack";
 
 const Dictaphone = () => {
   const {
@@ -38,17 +39,23 @@ const Dictaphone = () => {
   return (
     <div>
       <p>Microphone: {recordingMode ? "on" : "off"}</p>
-      {recordingMode ? (
-        <IconButton onClick={() => setRecordingMode(!recordingMode)}>
-          <MicIcon color="primary" />
-        </IconButton>
-      ) : (
-        <IconButton onClick={() => setRecordingMode(!recordingMode)}>
-          <MicOffIcon />
-        </IconButton>
-      )}
-      <button onClick={resetTranscript}>Reset</button>
-      <button onClick={() => DownloadJSON(records)}>Download</button>
+      <Stack direction="row" spacing={2}>
+        {recordingMode ? (
+          <IconButton onClick={() => setRecordingMode(!recordingMode)}>
+            <MicIcon color="primary" />
+          </IconButton>
+        ) : (
+          <IconButton onClick={() => setRecordingMode(!recordingMode)}>
+            <MicOffIcon />
+          </IconButton>
+        )}
+        <Button color="warning" variant="contained" onClick={resetTranscript}>
+          Reset
+        </Button>
+        <Button variant="contained" onClick={() => DownloadJSON(records)}>
+          Download
+        </Button>
+      </Stack>
       <p>speech now: {transcript}</p>
       <p>records:</p>
       <ul>
@@ -64,7 +71,7 @@ const Dictaphone = () => {
 };
 
 function DownloadJSON(jsonData) {
-  if (!jsonData) return null;
+  if (!jsonData || jsonData.length === 0) return null;
   const date = new Date(Date.now());
   const fileName = `record_${date.getFullYear()}${(
     "0" + String(date.getMonth() + 1)
