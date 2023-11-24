@@ -11,6 +11,8 @@ import Upload from "./routes/Upload";
 import Record from "./routes/Record";
 import Dictaphone from "./routes/RecordOnly";
 import Navigation from "./components/Navigation";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
 const router = createBrowserRouter([
   {
@@ -39,10 +41,29 @@ const router = createBrowserRouter([
   },
 ]);
 
+const theme = responsiveFontSizes(
+  createTheme({
+    palette: {
+      mode: "light",
+      primary: {
+        main: "#388e3c",
+      },
+      secondary: {
+        main: "#ffa000",
+      },
+      background: {
+        default: "#e8f5e9",
+      },
+    },
+  }),
+);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Navigation>
-      <RouterProvider router={router} />
-    </Navigation>
+    <ThemeProvider theme={theme}>
+      <Navigation>
+        <RouterProvider router={router} />
+      </Navigation>
+    </ThemeProvider>
   </React.StrictMode>,
 );
