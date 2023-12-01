@@ -42,7 +42,7 @@ export default function Record() {
 
   return (
     <div id="main">
-      <Stack direction="row" spacing={2}>
+      <Stack direction={{ mg: "column", lg: "row" }} spacing={2}>
         <Grid
           container
           direction="column"
@@ -123,6 +123,7 @@ function SlideView(props) {
       component="section"
       height={550}
       width={900}
+      maxWidth="95vw"
       sx={{ p: 2, border: "1px dashed grey" }}
     >
       スライド{pageNumber}
@@ -137,18 +138,8 @@ function TranscriptionView(props) {
     { time: new Date(Date.now()), text: transcript },
   ]; // Add transcript to records array
   return (
-    <Box
-      component="section"
-      height={650}
-      width={500}
-      sx={{
-        p: 2,
-        border: "1px dashed grey",
-        overflowY: "scroll",
-        whiteSpace: "normal",
-      }}
-    >
-      <Paper elevation={3}>
+    <Paper style={{ overflowY: "scroll" }}>
+      <Box component="section" height="75vh" width={500} maxWidth="95vw">
         <ul>
           {realtimeRecords.map((record) => (
             <li key={record.time}>
@@ -157,7 +148,7 @@ function TranscriptionView(props) {
             </li>
           ))}
         </ul>
-      </Paper>
-    </Box>
+      </Box>
+    </Paper>
   );
 }

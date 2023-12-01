@@ -11,6 +11,7 @@ import Upload from "./routes/Upload";
 import Record from "./routes/Record";
 import Dictaphone from "./routes/RecordOnly";
 import Navigation from "./components/Navigation";
+import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 
@@ -60,6 +61,7 @@ const theme = responsiveFontSizes(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <CssBaseline />
     <ThemeProvider theme={theme}>
       <Navigation>
         <RouterProvider router={router} />
