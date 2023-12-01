@@ -4,13 +4,36 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";
+import LensIcon from "@mui/icons-material/Lens";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/system/Box";
-import Paper from "@mui/material/Paper";
+import Fab from "@mui/material/Fab";
+import { ThemeProvider } from "@mui/material/styles";
+
+import TranscriptionView from "../components/TranscriptionView";
+
+import DownloadJSON from "../utils/DownloadJSON";
+
+import { createTheme } from "@mui/material/styles";
+import { deepOrange, grey } from "@mui/material/colors";
+
+const buttonTheme = createTheme({
+  palette: {
+    recording: {
+      main: deepOrange[500],
+    },
+    mute: {
+      main: grey[500],
+    },
+    white: {
+      main: "#fff",
+    },
+    black: {
+      main: "#000",
+    },
+  },
+});
 
 export default function Record() {
   const {
@@ -52,21 +75,25 @@ export default function Record() {
           <Grid item xs>
             <SlideView pageNumber={pageNumber} />
           </Grid>
-          <Grid item xs>
-            {recordingMode ? (
-              <IconButton
-                color="primary"
-                variant="contained"
-                onClick={() => setRecordingMode(!recordingMode)}
-              >
-                <MicIcon color="primary" />
-              </IconButton>
-            ) : (
-              <IconButton onClick={() => setRecordingMode(!recordingMode)}>
-                <MicOffIcon />
-              </IconButton>
-            )}
-          </Grid>
+          <ThemeProvider theme={buttonTheme}>
+            <Grid item xs>
+              {recordingMode ? (
+                <Fab
+                  color="recording"
+                  onClick={() => setRecordingMode(!recordingMode)}
+                >
+                  <LensIcon color="white" />
+                </Fab>
+              ) : (
+                <Fab
+                  color="mute"
+                  onClick={() => setRecordingMode(!recordingMode)}
+                >
+                  <LensIcon color="white" />
+                </Fab>
+              )}
+            </Grid>
+          </ThemeProvider>
           <Grid item xs>
             <Stack direction="row" spacing={2}>
               <Button
@@ -93,29 +120,6 @@ export default function Record() {
   );
 }
 
-function DownloadJSON(jsonData) {
-  if (!jsonData || jsonData.length === 0) return null;
-  const date = new Date(Date.now());
-  const fileName = `record_${date.getFullYear()}${(
-    "0" + String(date.getMonth() + 1)
-  ).slice(-2)}${("0" + String(date.getDate())).slice(-2)}-${(
-    "0" + String(date.getHours())
-  ).slice(-2)}${("0" + String(date.getMinutes())).slice(-2)}${(
-    "0" + String(date.getSeconds())
-  ).slice(-2)}.json`;
-  const blobData = new Blob([JSON.stringify(jsonData)], {
-    type: "application/json",
-  });
-  const url = window.URL.createObjectURL(blobData);
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", fileName);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
 function SlideView(props) {
   const { pageNumber } = props;
   return (
@@ -128,27 +132,5 @@ function SlideView(props) {
     >
       スライド{pageNumber}
     </Box>
-  );
-}
-
-function TranscriptionView(props) {
-  const { records, transcript } = props;
-  const realtimeRecords = [
-    ...records,
-    { time: new Date(Date.now()), text: transcript },
-  ]; // Add transcript to records array
-  return (
-    <Paper style={{ overflowY: "scroll" }}>
-      <Box component="section" height="75vh" width={500} maxWidth="95vw">
-        <ul>
-          {realtimeRecords.map((record) => (
-            <li key={record.time}>
-              {record.time.getHours()}:{record.time.getMinutes()}:
-              {record.time.getSeconds()}: {record.text}
-            </li>
-          ))}
-        </ul>
-      </Box>
-    </Paper>
   );
 }
