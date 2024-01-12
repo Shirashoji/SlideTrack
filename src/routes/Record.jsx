@@ -84,7 +84,7 @@ export default function Record() {
           justifyContent="space-between"
         >
           <Grid item xs>
-            <SlideView setNumPages={setNumPages} pageNumber={pageNumber} />
+            <SlideView numPages={numPages} setNumPages={setNumPages} pageNumber={pageNumber} />
           </Grid>
           <p>
             スライド {pageNumber} / {numPages}
@@ -135,22 +135,22 @@ export default function Record() {
 }
 
 function SlideView(props) {
-  const { setNumPages, pageNumber } = props;
+  const { numPages, setNumPages, pageNumber } = props;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   }
-
+  
   return (
     <Box
       component="section"
-      height={550}
+      height={numPages === undefined ? 550 : "auto"}
       width={900}
       maxWidth="95vw"
-      sx={{ p: 2, border: "1px dashed grey" }}
+      sx={{ border: "1px dashed grey" }}
     >
       <Document file="../../sampleData/SlideTrack_meeting.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} />
+        <Page pageNumber={pageNumber} width={900}/>
       </Document>
     </Box>
   );
