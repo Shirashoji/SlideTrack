@@ -150,7 +150,7 @@ function SlideView(props) {
       sx={{ border: "1px dashed grey" }}
     >
       <Document file="../../sampleData/SlideTrack_meeting.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} width={900}/>
+        <Page pageNumber={pageNumber} width={900 - 1 /*横幅は右枠線の太さ1px分だけ小さくする必要あり*/}/>
       </Document>
     </Box>
   );
