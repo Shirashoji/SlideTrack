@@ -18,6 +18,16 @@ import DownloadJSON from "../utils/DownloadJSON";
 import { createTheme } from "@mui/material/styles";
 import { deepOrange, grey } from "@mui/material/colors";
 
+import { Document, Page } from 'react-pdf';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+
+import { pdfjs } from 'react-pdf';
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
+
 const buttonTheme = createTheme({
   palette: {
     recording: {
@@ -44,7 +54,8 @@ export default function Record() {
   } = useSpeechRecognition();
   const [records, setRecords] = useState([]);
   const [recordingMode, setRecordingMode] = useState(false);
-  const [pageNumber, setPageNumber] = useState(0);
+  const [numPages, setNumPages] = useState(); // PDFの全ページ数
+  const [pageNumber, setPageNumber] = useState(1); // 現在表示中のページ番号
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -73,8 +84,11 @@ export default function Record() {
           justifyContent="space-between"
         >
           <Grid item xs>
-            <SlideView pageNumber={pageNumber} />
+            <SlideView setNumPages={setNumPages} pageNumber={pageNumber} />
           </Grid>
+          <p>
+            スライド {pageNumber} / {numPages}
+          </p>
           <ThemeProvider theme={buttonTheme}>
             <Grid item xs>
               {recordingMode ? (
@@ -121,7 +135,12 @@ export default function Record() {
 }
 
 function SlideView(props) {
-  const { pageNumber } = props;
+  const { setNumPages, pageNumber } = props;
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  }
+
   return (
     <Box
       component="section"
@@ -130,7 +149,9 @@ function SlideView(props) {
       maxWidth="95vw"
       sx={{ p: 2, border: "1px dashed grey" }}
     >
-      スライド{pageNumber}
+      <Document file="../../sampleData/SlideTrack_meeting.pdf" onLoadSuccess={onDocumentLoadSuccess}>
+        <Page pageNumber={pageNumber} />
+      </Document>
     </Box>
   );
 }
