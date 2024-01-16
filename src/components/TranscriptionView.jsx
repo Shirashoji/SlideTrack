@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import Box from "@mui/system/Box";
-import Paper from "@mui/material/Paper";
+import { Paper } from "@mui/material";
 
 export default function TranscriptionView(props) {
   const { records, transcript } = props;
@@ -11,10 +11,9 @@ export default function TranscriptionView(props) {
   };
 
   const currentTime = new Date(Date.now());
-  // { time: new Date(Date.now()), text: transcript };
   return (
-    <Paper style={{ overflowY: "scroll" }}>
-      <Box component="section" height="75vh" width={500} maxWidth="95vw">
+    <Paper sx={{ overflowY: "scroll" }}>
+      <Box sx={{ flexGrow: 1 }} minWidth={{ md: "90vw", lg: "35vw" }}>
         <ul>
           {records.map((record) => (
             <li key={record.time}>

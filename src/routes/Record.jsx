@@ -87,7 +87,12 @@ export default function Record() {
 
   return (
     <div id="main">
-      <Stack direction={{ mg: "column", lg: "row" }} spacing={2}>
+      <Stack
+        direction={{ md: "column", lg: "row" }}
+        justifyContent="center"
+        alignItems={{ md: "center", lg: "stretch" }}
+        spacing={2}
+      >
         <Grid
           container
           direction="column"
