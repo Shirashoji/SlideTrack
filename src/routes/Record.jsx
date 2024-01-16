@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "regenerator-runtime";
 import { useEffect, useState } from "react";
 import SpeechRecognition, {
@@ -57,22 +58,32 @@ export default function Record() {
   const [numPages, setNumPages] = useState(); // PDFの全ページ数
   const [pageNumber, setPageNumber] = useState(1); // 現在表示中のページ番号
 
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
-  }
+  useEffect(() => {
+    if (recordingMode) {
+      SpeechRecognition.startListening();
+    } else {
+      SpeechRecognition.stopListening();
+    }
+  }, [listening, recordingMode]);
 
   useEffect(() => {
-    if (!listening && transcript !== "")
-      setRecords([
-        ...records,
+    if (!browserSupportsSpeechRecognition) {
+      return <span>Browser doesn&apos;t support speech recognition.</span>;
+    }
+
+    if (!listening && transcript !== "") {
+      setRecords((prevRecords) => [
+        ...prevRecords,
         { time: new Date(Date.now()), text: transcript, page: pageNumber },
       ]);
-  }, [listening]);
-
-  useEffect(() => {
-    if (recordingMode) SpeechRecognition.startListening();
-    else SpeechRecognition.stopListening();
-  }, [listening, recordingMode]);
+    }
+  }, [
+    listening,
+    transcript,
+    pageNumber,
+    records,
+    browserSupportsSpeechRecognition,
+  ]);
 
   return (
     <div id="main">
@@ -139,6 +150,12 @@ export default function Record() {
 }
 
 function SlideView(props) {
+  SlideView.propTypes = {
+    numPages: PropTypes.number.isRequired,
+    setNumPages: PropTypes.func.isRequired,
+    pageNumber: PropTypes.number.isRequired,
+  };
+
   const { numPages, setNumPages, pageNumber } = props;
 
   const onDocumentLoadSuccess = ({ numPages }) => {

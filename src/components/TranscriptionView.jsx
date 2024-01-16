@@ -1,8 +1,14 @@
+import PropTypes from "prop-types";
 import Box from "@mui/system/Box";
 import Paper from "@mui/material/Paper";
 
 export default function TranscriptionView(props) {
   const { records, transcript } = props;
+
+  TranscriptionView.propTypes = {
+    records: PropTypes.array.isRequired,
+    transcript: PropTypes.string.isRequired,
+  };
 
   const currentTime = new Date(Date.now());
   // { time: new Date(Date.now()), text: transcript };
