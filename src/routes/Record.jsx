@@ -18,13 +18,13 @@ import DownloadJSON from "../utils/DownloadJSON";
 import { createTheme } from "@mui/material/styles";
 import { deepOrange, grey } from "@mui/material/colors";
 
-import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/Page/TextLayer.css';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
+import { Document, Page } from "react-pdf";
+import "react-pdf/dist/Page/TextLayer.css";
+import "react-pdf/dist/Page/AnnotationLayer.css";
 
-import { pdfjs } from 'react-pdf';
+import { pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
+  "pdfjs-dist/build/pdf.worker.min.js",
   import.meta.url,
 ).toString();
 
@@ -65,7 +65,7 @@ export default function Record() {
     if (!listening && transcript !== "")
       setRecords([
         ...records,
-        { time: new Date(Date.now()), text: transcript },
+        { time: new Date(Date.now()), text: transcript, page: pageNumber },
       ]);
   }, [listening]);
 
@@ -84,7 +84,11 @@ export default function Record() {
           justifyContent="space-between"
         >
           <Grid item xs>
-            <SlideView numPages={numPages} setNumPages={setNumPages} pageNumber={pageNumber} />
+            <SlideView
+              numPages={numPages}
+              setNumPages={setNumPages}
+              pageNumber={pageNumber}
+            />
           </Grid>
           <p>
             スライド {pageNumber} / {numPages}
@@ -139,8 +143,8 @@ function SlideView(props) {
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
-  }
-  
+  };
+
   return (
     <Box
       component="section"
@@ -149,8 +153,14 @@ function SlideView(props) {
       maxWidth="95vw"
       sx={{ border: "1px dashed grey" }}
     >
-      <Document file="../../sampleData/SlideTrack_meeting.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} width={900 - 1 /*横幅は右枠線の太さ1px分だけ小さくする必要あり*/}/>
+      <Document
+        file="../../sampleData/SlideTrack_meeting.pdf"
+        onLoadSuccess={onDocumentLoadSuccess}
+      >
+        <Page
+          pageNumber={pageNumber}
+          width={900 - 1 /*横幅は右枠線の太さ1px分だけ小さくする必要あり*/}
+        />
       </Document>
     </Box>
   );
