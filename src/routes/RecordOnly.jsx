@@ -20,7 +20,7 @@ const Dictaphone = () => {
   const [recordingMode, setRecordingMode] = useState(false);
 
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
+    return <span>Browser doesn&apos;t support speech recognition.</span>;
   }
 
   useEffect(() => {
