@@ -23,7 +23,7 @@ const navItems = [
   { item: "Record Only", link: "./record_only", target: "_self" },
   {
     item: "GitHub",
-    link: "https://github.com/Shirashoji/chofu-population-vis",
+    link: "https://github.com/Shirashoji/SlideTrack",
     target: "_blank",
   },
 ];
