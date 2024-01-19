@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/system/Box";
 import Fab from "@mui/material/Fab";
+import Pagination from '@mui/material/Pagination';
 import { ThemeProvider } from "@mui/material/styles";
 
 import TranscriptionView from "../components/TranscriptionView";
@@ -106,9 +107,7 @@ export default function Record() {
               pageNumber={pageNumber}
             />
           </Grid>
-          <p>
-            スライド {pageNumber} / {numPages}
-          </p>
+          <Pagination count={numPages} page={pageNumber} onChange={(e, value) => {setPageNumber(value)}} size="large" showFirstButton showLastButton sx={{ my: 1 }}/>
           <ThemeProvider theme={buttonTheme}>
             <Grid item xs>
               {recordingMode ? (
