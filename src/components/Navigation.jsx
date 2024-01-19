@@ -28,6 +28,15 @@ const navItems = [
   },
 ];
 
+Navigation.propTypes = {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window: PropTypes.func,
+  children: PropTypes.node, // Add this line
+};
+
 function Navigation(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);

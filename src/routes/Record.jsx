@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "regenerator-runtime";
 import { useEffect, useState } from "react";
 import SpeechRecognition, {
@@ -9,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/system/Box";
 import Fab from "@mui/material/Fab";
+import Pagination from "@mui/material/Pagination";
 import { ThemeProvider } from "@mui/material/styles";
 
 import TranscriptionView from "../components/TranscriptionView";
@@ -17,6 +19,16 @@ import DownloadJSON from "../utils/DownloadJSON";
 
 import { createTheme } from "@mui/material/styles";
 import { deepOrange, grey } from "@mui/material/colors";
+
+import { Document, Page } from "react-pdf";
+import "react-pdf/dist/Page/TextLayer.css";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+
+import { pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url,
+).toString();
 
 const buttonTheme = createTheme({
   palette: {
@@ -44,28 +56,40 @@ export default function Record() {
   } = useSpeechRecognition();
   const [records, setRecords] = useState([]);
   const [recordingMode, setRecordingMode] = useState(false);
-  const [pageNumber, setPageNumber] = useState(0);
-
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
-  }
+  const [numPages, setNumPages] = useState(); // PDFの全ページ数
+  const [pageNumber, setPageNumber] = useState(1); // 現在表示中のページ番号
 
   useEffect(() => {
-    if (!listening && transcript !== "")
-      setRecords([
-        ...records,
-        { time: new Date(Date.now()), text: transcript },
-      ]);
-  }, [listening]);
-
-  useEffect(() => {
-    if (recordingMode) SpeechRecognition.startListening();
-    else SpeechRecognition.stopListening();
+    if (recordingMode) {
+      SpeechRecognition.startListening();
+    } else {
+      SpeechRecognition.stopListening();
+    }
   }, [listening, recordingMode]);
+
+  useEffect(() => {
+    if (!browserSupportsSpeechRecognition) {
+      return <span>Browser doesn&apos;t support speech recognition.</span>;
+    }
+  }, [browserSupportsSpeechRecognition]);
+
+  useEffect(() => {
+    if (!listening && transcript !== "") {
+      setRecords((prevRecords) => [
+        ...prevRecords,
+        { time: new Date(Date.now()), text: transcript, page: pageNumber },
+      ]);
+    }
+  }, [listening, transcript]);
 
   return (
     <div id="main">
-      <Stack direction={{ mg: "column", lg: "row" }} spacing={2}>
+      <Stack
+        direction={{ md: "column", lg: "row" }}
+        justifyContent="center"
+        alignItems={{ md: "center", lg: "stretch" }}
+        spacing={2}
+      >
         <Grid
           container
           direction="column"
@@ -73,8 +97,23 @@ export default function Record() {
           justifyContent="space-between"
         >
           <Grid item xs>
-            <SlideView pageNumber={pageNumber} />
+            <SlideView
+              numPages={numPages}
+              setNumPages={setNumPages}
+              pageNumber={pageNumber}
+            />
           </Grid>
+          <Pagination
+            count={numPages}
+            page={pageNumber}
+            onChange={(e, value) => {
+              setPageNumber(value);
+            }}
+            size="large"
+            showFirstButton
+            showLastButton
+            sx={{ my: 1 }}
+          />
           <ThemeProvider theme={buttonTheme}>
             <Grid item xs>
               {recordingMode ? (
@@ -114,23 +153,46 @@ export default function Record() {
             </Stack>
           </Grid>
         </Grid>
-        <TranscriptionView records={records} transcript={transcript} />
+        <TranscriptionView
+          records={records}
+          transcript={transcript}
+          setPage={setPageNumber}
+        />
       </Stack>
     </div>
   );
 }
 
 function SlideView(props) {
-  const { pageNumber } = props;
+  SlideView.propTypes = {
+    numPages: PropTypes.number.isRequired,
+    setNumPages: PropTypes.func.isRequired,
+    pageNumber: PropTypes.number.isRequired,
+  };
+
+  const { numPages, setNumPages, pageNumber } = props;
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
+
   return (
     <Box
       component="section"
-      height={550}
+      height={numPages === undefined ? 550 : "auto"}
       width={900}
       maxWidth="95vw"
-      sx={{ p: 2, border: "1px dashed grey" }}
+      sx={{ border: "1px dashed grey" }}
     >
-      スライド{pageNumber}
+      <Document
+        file="../../sampleData/SlideTrack_meeting.pdf"
+        onLoadSuccess={onDocumentLoadSuccess}
+      >
+        <Page
+          pageNumber={pageNumber}
+          width={900 - 1 /*横幅は右枠線の太さ1px分だけ小さくする必要あり*/}
+        />
+      </Document>
     </Box>
   );
 }
