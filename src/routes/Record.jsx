@@ -71,20 +71,16 @@ export default function Record() {
     if (!browserSupportsSpeechRecognition) {
       return <span>Browser doesn&apos;t support speech recognition.</span>;
     }
+  }, [browserSupportsSpeechRecognition]);
 
+  useEffect(() => {
     if (!listening && transcript !== "") {
       setRecords((prevRecords) => [
         ...prevRecords,
         { time: new Date(Date.now()), text: transcript, page: pageNumber },
       ]);
     }
-  }, [
-    listening,
-    transcript,
-    pageNumber,
-    records,
-    browserSupportsSpeechRecognition,
-  ]);
+  }, [listening, transcript]);
 
   return (
     <div id="main">
