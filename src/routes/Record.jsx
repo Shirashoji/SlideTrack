@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import "regenerator-runtime";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -82,6 +82,14 @@ export default function Record() {
     }
   }, [listening, transcript]);
 
+  const slideViewContent = useMemo(() => (
+    <SlideView
+      numPages={numPages}
+      setNumPages={setNumPages}
+      pageNumber={pageNumber}
+    />
+  ), [numPages, pageNumber]);
+
   return (
     <div id="main">
       <Stack
@@ -97,11 +105,7 @@ export default function Record() {
           justifyContent="space-between"
         >
           <Grid item xs>
-            <SlideView
-              numPages={numPages}
-              setNumPages={setNumPages}
-              pageNumber={pageNumber}
-            />
+            {slideViewContent}
           </Grid>
           <Pagination
             count={numPages}
