@@ -2,18 +2,20 @@ import React, { useCallback, useState } from 'react';
 import { Paper, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from "react-router-dom";
 
 export default function Upload() {
   const theme = useTheme();
   const [pdfFiles, setPdfFiles] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       const newPdfFiles = acceptedFiles.filter((file) => file.type === 'application/pdf');
 
       if (newPdfFiles.length > 0) {
-        setPdfFiles((prevPdfFiles) => [...prevPdfFiles, ...newPdfFiles]);
+        setPdfFiles(newPdfFiles);
         setErrorMessage('');
       } else {
         setErrorMessage('無効なファイルタイプです.PDFファイルを選択してください.');
@@ -29,6 +31,7 @@ export default function Upload() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: 'application/pdf',
+    multiple: false,
     onDrop,
   });
 
@@ -38,6 +41,10 @@ export default function Upload() {
     padding: theme.spacing(2),
     textAlign: 'center',
     cursor: 'pointer',
+  };
+
+  const handleClick = () => {
+    navigate("/record/");
   };
 
   return (
@@ -101,7 +108,7 @@ export default function Upload() {
                 style={{ border: '1px solid #ccc' }}
               />
               <div style={{ marginTop: theme.spacing(1) }}>
-                <Button variant="contained" color="success">
+                <Button variant="contained" color="success" onClick={handleClick}>
                   OK
                 </Button>
                 <Button
