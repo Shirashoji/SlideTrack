@@ -172,6 +172,20 @@ function SlideView(props) {
 
   const { numPages, setNumPages, pageNumber } = props;
 
+  const uri = localStorage.getItem('pdf');
+  let fileUrl;
+  if (uri) {
+    const binary = atob(uri.replace(/data:.*\/.*;base64,/, ''));
+    let bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const file = new Blob([bytes], { type: 'application/pdf' });
+    fileUrl = URL.createObjectURL(file);
+  } else {
+    fileUrl = '../../sampleData/SlideTrack_meeting.pdf';
+  }
+
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
@@ -185,7 +199,7 @@ function SlideView(props) {
       sx={{ border: "1px dashed grey" }}
     >
       <Document
-        file="../../sampleData/SlideTrack_meeting.pdf"
+        file={fileUrl}
         onLoadSuccess={onDocumentLoadSuccess}
       >
         <Page

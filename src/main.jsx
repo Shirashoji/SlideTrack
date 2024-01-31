@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     element: <Upload />,
   },
   {
-    path: "/record/",
+    path: "/record",
     element: <Record />,
   },
   {

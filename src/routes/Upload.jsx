@@ -44,7 +44,14 @@ export default function Upload() {
   };
 
   const handleClick = () => {
-    navigate("/record/");
+    const file = pdfFiles[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const uri = reader.result;
+      localStorage.setItem('pdf', uri);
+      navigate("/record");  
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
